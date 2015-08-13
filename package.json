@@ -1,0 +1,27 @@
+{
+  "name": "gulp-selenium-webdriver-mocha",
+  "version": "1.0.0",
+  "description": "Run selenium tests with selenium-webdriver.js and mocha",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glamb/gulp-selenium-webdriver-mocha.git"
+  },
+  "keywords": [
+    "gulpplugin",
+    "mocha",
+    "test",
+    "testing",
+    "selenium",
+    "webdriver"
+  ],
+  "author": "Gregg Lamb <greggmlamb@gmail.com> (https://github.com/glamb)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/glamb/gulp-selenium-webdriver-mocha/issues"
+  },
+  "homepage": "https://github.com/glamb/gulp-selenium-webdriver-mocha"
+}
