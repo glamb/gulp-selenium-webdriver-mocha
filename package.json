@@ -30,7 +30,9 @@
     "gulp-util": "^3.0.6",
     "mocha": "^2.2.5",
     "request": "^2.60.0",
-    "selenium-webdriver": "^2.46.1"
+    "selenium-standalone": "^4.5.3",
+    "selenium-webdriver": "^2.46.1",
+    "through2": "^2.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0"
