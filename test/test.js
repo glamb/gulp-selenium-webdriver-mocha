@@ -1,10 +1,14 @@
 var assert = require('assert');
 var selenium = require('../');
 var test = require('selenium-webdriver/testing');
+var By = require('selenium-webdriver').By;
+var until = require('selenium-webdriver').until
 
 test.describe('gulp-selenium-mocha test', function() {
-  test.it('should have a driver object', function() {
+
+  test.it('should have a driver object', function(done) {
     assert.ok(driver);
+    done();
   });
 
   test.it('should execute a google search with driver object', function(done) {
@@ -15,7 +19,6 @@ test.describe('gulp-selenium-mocha test', function() {
       .then(function(bool) {
         assert.strictEqual(bool, true);
       });
-    driver.quit();
     done();
   });
 });

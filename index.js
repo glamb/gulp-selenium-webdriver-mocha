@@ -6,23 +6,45 @@ var through = require('through2')
   , merge = require('deepmerge')
   , request = require('request')
   , selenium = require('selenium-standalone')
-  , webdriver = require('selenium-webdriver')
+  , Webdriver = require('selenium-webdriver')
   , async = require('async')
   , isSeleniumRunning = false
-  , seleniumServer = null;
+  , seleniumServer = null
+  , driver = null;
 
 var GulpSelWebMo = function(args) {
 
   var options = args || {}
+    , sessionID = null
     , seleniumInstallOptions = options.seleniumInstallOptions || {}
     , seleniumOptions = options.seleniumOptions || {};
 
+  GLOBAL.driver = new Webdriver.Builder()
+    .withCapabilities(options)
+    .build();
+
   var mocha = new Mocha(merge({
-    reporter: 'list',
+    reporter: 'spec',
     ui: 'bdd',
     grep: null,
     timeout: 10000
   },options));
+
+  /**
+ * helper function for asyncjs
+ */
+  var next = function(cb, param) {
+    return function() {
+      var args = Array.prototype.slice.call(arguments, 1);
+      if(typeof param !== 'undefined') {
+        args.unshift(param);
+      } else if (arguments.length === 1) {
+        args.unshift(arguments[0]);
+      }
+      args.unshift(null);
+      cb.apply(null, args);
+    };
+  };
 
   // Check is the selenium hub is running.
   // if selenium is running set isSeleniumRunning to true
@@ -84,23 +106,31 @@ var GulpSelWebMo = function(args) {
     }
   };
 
-  var startDriver = function(cb) {
-    gutil.log('startDriver');
-    cb(null);
-  };
-
   var runMocha = function(cb) {
-    gutil.log('runMocha');
-    cb(null);
+    gutil.log('run mocha tests');
+    /**
+     * save session ID
+     */
+    GLOBAL.driver.getSession()
+      .then(function(data) {
+        sessionID = data.id_;
+      });
+    return mocha.run(next(cb));
   };
 
-  var checkMochaResults = function(cb) {
-    gutil.log('checkMochaResults');
-    cb(null);
+  var checkMochaResults = function(result, cb) {
+    if(result !== 0) {
+        this.emit('error', new gutil.PluginError('gulp-webdriver', result + ' ' + (result === 1 ? 'test' : 'tests') + ' failed.', {
+            showStack: false
+        }));
+    }
+
+    return cb(null, result);
   };
 
   var killDriver = function(cb) {
     gutil.log('killDriver');
+    GLOBAL.driver.quit();
     cb(null);
   };
 
@@ -122,7 +152,7 @@ var GulpSelWebMo = function(args) {
       checkSeleniumServer.bind(stream),
       installSeleniumServer.bind(stream),
       startSeleniumServer.bind(stream),
-      startDriver.bind(stream),
+      checkSeleniumServer.bind(stream),
       runMocha.bind(stream),
       checkMochaResults.bind(stream)
     ];
